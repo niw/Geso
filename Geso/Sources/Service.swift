@@ -79,4 +79,9 @@ final class Service {
         move(imageURL, to: "deny")
         reloadImages()
     }
+    
+    func ignore(_ imageURL: URL) {
+        move(imageURL, to: "ignore")
+        reloadImages()
+    }
 }

@@ -58,7 +58,16 @@ struct MainView: View {
                             .controlSize(.extraLarge)
                         }
                     } else {
-                        Text("This is not image file.")
+                        ContentUnavailableView {
+                            Label("Not Image", systemImage: "doc.questionmark")
+                        } actions: {
+                            Button {
+                                service.ignore(imageURL)
+                            } label: {
+                                Text("Skip")
+                            }
+                            .keyboardShortcut(.rightArrow)
+                        }
                     }
                 } else {
                     ContentUnavailableView {
