@@ -17,11 +17,18 @@ struct MainView: View {
     var body: some View {
         if let folderURL = service.folderURL {
             VStack(spacing: 20.0) {
-                Text("\(folderURL.path())")
+                Label {
+                    Text(folderURL, format: .url.scheme(.never))
+                } icon: {
+                    Image(systemName: "folder")
+                        .symbolVariant(.fill)
+                        .foregroundStyle(.secondary)
+                }
 
                 if let imageURL = service.imageURLs.first {
                     if let image = NSImage(contentsOf: imageURL) {
-                        Text("\(imageURL.lastPathComponent)")
+                        Text("\(imageURL.deletingPathExtension().lastPathComponent)")
+                            .font(.title)
                             .bold()
                         Image(nsImage: image)
                         HStack(spacing: 100.0) {
@@ -33,8 +40,9 @@ struct MainView: View {
                                 } icon: {
                                     Image(systemName: "trash")
                                 }
-                                .padding()
                             }
+                            .keyboardShortcut(.leftArrow)
+                            .controlSize(.extraLarge)
 
                             Button {
                                 service.accept(imageURL)
@@ -44,28 +52,30 @@ struct MainView: View {
                                 } icon: {
                                     Image(systemName: "checkmark.seal.fill")
                                 }
-                                .padding()
                             }
                             .buttonStyle(.borderedProminent)
+                            .keyboardShortcut(.rightArrow)
+                            .controlSize(.extraLarge)
                         }
                     } else {
                         Text("This is not image file.")
                     }
                 } else {
-                    Text("No image files")
+                    ContentUnavailableView {
+                        Label("No Images", systemImage: "photo.on.rectangle.angled")
+                    }
                 }
             }
             .scenePadding()
         } else {
-            Button {
-                isFileImporterPresented = true
-            } label: {
-                Label {
-                    Text("Browse")
-                } icon: {
-                    Image(systemName: "folder.fill")
+            ContentUnavailableView {
+                Label("Select Folder", systemImage: "folder")
+            } actions: {
+                Button {
+                    isFileImporterPresented = true
+                } label: {
+                    Text("Open…")
                 }
-                .padding()
             }
             .fileImporter(isPresented: $isFileImporterPresented, allowedContentTypes: [.folder]) { result in
                 guard case .success(let url) = result else {
