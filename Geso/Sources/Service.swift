@@ -5,12 +5,13 @@
 //  Created by Yoshimasa Niwa on 5/23/24.
 //
 
+import AppKit
 import Foundation
 import Observation
 
 @MainActor
 @Observable
-final class Service {
+final class Service: NSObject {
     var folderURL: URL? {
         didSet {
             guard oldValue != folderURL else {
@@ -83,5 +84,11 @@ final class Service {
     func ignore(_ imageURL: URL) {
         move(imageURL, to: "ignore")
         reloadImages()
+    }
+}
+
+extension Service: NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
     }
 }
