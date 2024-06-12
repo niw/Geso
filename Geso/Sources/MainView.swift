@@ -13,6 +13,8 @@ struct MainView: View {
 
     @State
     private var isFileImporterPresented: Bool = false
+    @State
+    private var isDropTargeted: Bool = false
 
     var body: some View {
         if let folderURL = service.folderURL {
@@ -86,13 +88,28 @@ struct MainView: View {
                     Text("Open…")
                 }
             }
+            .opacity(isDropTargeted ? 0.8 : 1.0)
+            .scenePadding()
             .fileImporter(isPresented: $isFileImporterPresented, allowedContentTypes: [.folder]) { result in
                 guard case .success(let url) = result else {
                     return
                 }
                 service.folderURL = url
             }
-            .scenePadding()
+            .onDrop(of: [.fileURL], isTargeted: $isDropTargeted) { providers in
+                guard let provider = providers.first else {
+                    return false
+                }
+                _ = provider.loadObject(ofClass: URL.self) { url, error in
+                    guard let url else {
+                        return
+                    }
+                    Task { @MainActor in
+                        service.folderURL = url
+                    }
+                }
+                return true
+            }
         }
     }
 }
