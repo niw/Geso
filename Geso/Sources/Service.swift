@@ -71,18 +71,18 @@ final class Service: NSObject {
         }
     }
 
-    func accept(_ imageURL: URL) {
-        move(imageURL, to: "accept")
+    func markAsGood(_ imageURL: URL) {
+        move(imageURL, to: "good")
         reloadImages()
     }
 
-    func deny(_ imageURL: URL) {
-        move(imageURL, to: "deny")
+    func markAsBad(_ imageURL: URL) {
+        move(imageURL, to: "bad")
         reloadImages()
     }
-    
+
     func ignore(_ imageURL: URL) {
-        move(imageURL, to: "ignore")
+        move(imageURL, to: "ignored")
         reloadImages()
     }
 }
